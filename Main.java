@@ -108,6 +108,7 @@ public class Main {
         }
         System.out.println("Converting laser events... Done. " + replaceCount + "/" + LaserCount + "             ");
         System.out.println("Outputting file at " + nFile);
+
         File file = new File(nFile);
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(levelData);
