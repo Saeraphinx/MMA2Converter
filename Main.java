@@ -19,7 +19,8 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         // Call for user file loc.
         Scanner userPrompt = new Scanner(System.in);
-        System.out.println("Only convert files once. Do not open files generated with this tool in MMA2. \nWhere is the level.dat located?");
+        System.out.println("Only run this once per file. Do not open files generated with this tool in MMA2.");
+        System.out.println("Where is the level.dat located?");
         String oFile = userPrompt.nextLine().trim();
         System.out.println("Where do you want your want your level.dat to be exported to?\nNOTE: Blank will overwrite the existing file.");
         String nFileInput = userPrompt.nextLine();
@@ -107,7 +108,6 @@ public class Main {
         }
         System.out.println("Converting laser events... Done. " + replaceCount + "/" + LaserCount + "             ");
         System.out.println("Outputting file at " + nFile);
-
         File file = new File(nFile);
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(levelData);
