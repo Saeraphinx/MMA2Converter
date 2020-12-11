@@ -1,13 +1,5 @@
-/*
- * This will be the worst code you have ever seen. Sorry but I don't care.
- * 
- * Title: MMA2 360 Converter
- * Author: TM0D
- * Description: Converts type 12 & type 13 events into laser & 360 events based on their value 
- *  (0-7 for 360 and 8 - * for laser speed)
- * 
- */
 
+//  This will be the worst code you have ever seen. Sorry but I don't care.
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileReader;
@@ -15,6 +7,12 @@ import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/** 
+ *  Converts type 12 & type 13 events into laser & 360 events based on their value 
+ *  (0-7 for 360 and 8 - * for laser speed)
+ *  @author TM0D
+ * 
+ */
 public class Main {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         // Call for user file loc.
