@@ -52,7 +52,7 @@ public class Main {
             }
         }
 
-        System.out.println("Found " + LaserCount + " matches for right laser speed events.                                  ");
+        System.out.println("Found " + LaserCount + " matches for laser speed events.                                  ");
 
         // confirm details with the user, if not exit.
         System.out.println("Would you like to continue? Y/n (Default is Y)");
