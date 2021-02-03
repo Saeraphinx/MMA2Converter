@@ -42,7 +42,7 @@ public class Converter {
         }
     }
 
-    private void backupLevelData() throws IOException {
+    public void backupLevelData() throws IOException {
         String backupLocation = pathIn.substring(0, pathIn.indexOf(".dat")) + "_backup.dat";
         File file = new File(backupLocation);
         FileWriter fileWriter = new FileWriter(file);
@@ -51,7 +51,7 @@ public class Converter {
         fileWriter.close();
     }
 
-    private void outputLevelData() throws IOException {
+    public void outputLevelData() throws IOException {
         File file = new File(pathOut);
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(levelData);
