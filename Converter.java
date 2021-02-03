@@ -13,6 +13,7 @@ public class Converter {
     private String levelData;
     private String levelDataBackup;
     private int laserCount;
+    private int replacedLaserCount;
     private final String rLaserType = "\"_type\":13";
     private final String lLaserType = "\"_type\":12";
 
@@ -59,25 +60,24 @@ public class Converter {
     }
 
     public void checkEvents() {
-        int LaserCount = 0;
-        System.out.print("Looking for Laser events... \r");
+        laserCount = 0;
+        // System.out.print("Looking for Laser events... \r");
 
         for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
             if (levelData.substring(i, (i + rLaserType.length())).equals(rLaserType)) {
-                System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
-                LaserCount++;
+                // System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                laserCount++;
             } else if (levelData.substring(i, (i + lLaserType.length())).equals(lLaserType)) {
-                System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
-                LaserCount++;
+                // System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                laserCount++;
             }
         }
 
-        System.out.println("Found " + LaserCount + " matches for laser speed events.                                  ");
-        LaserCount = laserCount;
+        // System.out.println("Found " + LaserCount + " matches for laser speed events.                                  ");
     }
 
     public void replaceEvents() {
-        int replaceCount = 0;
+        replacedLaserCount = 0;
         // Start replacing based on type 13's value
         for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
             if (levelData.substring(i, (i + rLaserType.length())).equals(rLaserType)) {
@@ -97,7 +97,7 @@ public class Converter {
                 }
                 event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
                 levelData = levelData.substring(0, i) + event + levelData.substring(levelData.indexOf("}", i));
-                replaceCount++;
+                replacedLaserCount++;
 
                 // Start replacing based on type 12's value
             } else if (levelData.substring(i, (i + lLaserType.length())).equals(lLaserType)) {
@@ -117,10 +117,112 @@ public class Converter {
                 }
                 event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
                 levelData = levelData.substring(0, i) + event + levelData.substring(levelData.indexOf("}", i));
+                replacedLaserCount++;
+            }
+            // System.out.print("Converting laser events...  Currently on " + replacedLaserCount + "/" + laserCount + "\r");
+        }
+        // System.out.println("Converting laser events... Done. " + replacedLaserCount + "/" + laserCount + "             ");
+    }
+/*  Used for holding old method, as I would still like to keep it in the branch for refrence for now.
+    private static void prototype() throws FileNotFoundException, IOException {
+        // Call for user file loc.
+        Scanner userPrompt = new Scanner(System.in);
+        System.out.println("Only run this once per file. Do not open files generated with this tool in MMA2.");
+        System.out.println("Where is the level.dat located?");
+        String oFile = userPrompt.nextLine().trim();
+        System.out.println("Where do you want your want your level.dat to be exported to?\nNOTE: Blank will overwrite the existing file.");
+        String nFileInput = userPrompt.nextLine();
+        String nFile;
+        if (nFileInput.isBlank()) {
+            nFile = oFile;
+        } else {
+            nFile = nFileInput.trim();
+        }
+        nFileInput = null;
+
+        // Read file
+        FileReader reader = new FileReader(oFile);
+        Scanner scan = new Scanner(reader);
+        String levelData = scan.nextLine();
+        scan.close();
+
+        //For error checking later
+        final String rLaserType = "\"_type\":13";
+        final String lLaserType = "\"_type\":12";
+        int LaserCount = 0;
+        System.out.print("Looking for Laser events... \r");
+
+        for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
+            if (levelData.substring(i,(i + rLaserType.length())).equals(rLaserType)) {
+                System.out.print("Looking for " + lLaserType  + " and " + rLaserType +". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                LaserCount++;
+            } else if (levelData.substring(i,(i + lLaserType.length())).equals(lLaserType)) {
+                System.out.print("Looking for " + lLaserType  + " and " + rLaserType +". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                LaserCount++;
+            }
+        }
+
+        System.out.println("Found " + LaserCount + " matches for laser speed events.                                  ");
+
+        // confirm details with the user, if not exit.
+        System.out.println("Would you like to continue? Y/n (Default is Y)");
+        String confirm = userPrompt.nextLine();
+        if (confirm.equals("Y") || confirm.isBlank()) {    
+        } else {
+            userPrompt.close();
+            System.exit(0);
+        }
+
+        int replaceCount = 0;
+        // Start replacing based on type 13's value
+        for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
+            if (levelData.substring(i,(i + rLaserType.length())).equals(rLaserType)) {
+                String event = levelData.substring(i,levelData.indexOf("}", i));
+                int eventValue = Integer.parseInt(event.substring(event.lastIndexOf(":") + 1));
+                int eventType = Integer.parseInt(event.substring(event.indexOf(":") + 1, event.indexOf(",")));
+                switch (eventValue) {
+                    // Switch event into 360 event
+                    case 0: case 1: case 2: case 3:
+                    case 4: case 5: case 6: case 7:
+                    eventType = 15; break;
+                    // keep event as laser
+                    default:
+                    eventValue = Math.abs(eventValue - 8); break;
+                }
+                event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
+                levelData = levelData.substring(0,i) + event + levelData.substring(levelData.indexOf("}", i));
+                replaceCount++;
+
+
+                // Start replacing based on type 12's value
+            } else if (levelData.substring(i,(i + lLaserType.length())).equals(lLaserType)) {
+                String event = levelData.substring(i,levelData.indexOf("}", i));
+                int eventValue = Integer.parseInt(event.substring(event.lastIndexOf(":") + 1));
+                int eventType = Integer.parseInt(event.substring(event.indexOf(":") + 1, event.indexOf(",")));
+                switch (eventValue) {
+                    // Switch event into 360 event
+                    case 0: case 1: case 2: case 3:
+                    case 4: case 5: case 6: case 7:
+                    eventType = 14; break;
+                    // keep event as laser
+                    default:
+                    eventValue = Math.abs(eventValue - 8); break;
+                }
+                event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
+                levelData = levelData.substring(0,i) + event + levelData.substring(levelData.indexOf("}", i));
                 replaceCount++;
             }
-            System.out.print("Converting laser events...  Currently on " + replaceCount + "/" + laserCount + "\r");
+            System.out.print("Converting laser events...  Currently on " + replaceCount + "/" + LaserCount + "\r");
         }
-        System.out.println("Converting laser events... Done. " + replaceCount + "/" + laserCount + "             ");
+        System.out.println("Converting laser events... Done. " + replaceCount + "/" + LaserCount + "             ");
+        System.out.println("Outputting file at " + nFile);
+
+        File file = new File(nFile);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(levelData);
+		fileWriter.flush();
+        fileWriter.close();
+        userPrompt.close();
     }
+    */
 }
