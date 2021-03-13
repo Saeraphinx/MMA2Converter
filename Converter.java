@@ -29,6 +29,14 @@ public class Converter {
         this.levelData = loadLevelData();
     }
 
+    public int getLaserCount() {
+        return laserCount;
+    }
+
+    public int getReplacedLaserCount() {
+        return replacedLaserCount;
+    }
+
     private String loadLevelData() throws FileNotFoundException, IOException {
         try {
             FileReader reader = new FileReader(pathIn);
