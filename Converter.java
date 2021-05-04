@@ -1,4 +1,7 @@
 import java.util.Scanner;
+
+import javax.swing.JTextArea;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,13 +20,13 @@ public class Converter {
     private final String rLaserType = "\"_type\":13";
     private final String lLaserType = "\"_type\":12";
 
-    public Converter(String path) throws FileNotFoundException, IOException {
+    public Converter(String path) {
         this.pathIn = path;
         this.pathOut = this.pathIn;
         this.levelData = loadLevelData();
     }
 
-    public Converter(String pathIn, String pathOut) throws FileNotFoundException, IOException {
+    public Converter(String pathIn, String pathOut) {
         this.pathIn = pathIn;
         this.pathOut = pathOut;
         this.levelData = loadLevelData();
@@ -37,7 +40,7 @@ public class Converter {
         return replacedLaserCount;
     }
 
-    private String loadLevelData() throws FileNotFoundException, IOException {
+    private String loadLevelData() {
         try {
             FileReader reader = new FileReader(pathIn);
             Scanner scan = new Scanner(reader);
@@ -45,46 +48,54 @@ public class Converter {
             scan.close();
             levelDataBackup = localLevelData;
             return localLevelData;
-        } catch (Exception FileNotFoundException) {
+        } catch (Exception e) {
             return "Error";
         }
     }
 
-    public void backupLevelData() throws IOException {
+    public void backupLevelData(JTextArea log) {
         String backupLocation = pathIn.substring(0, pathIn.indexOf(".dat")) + "_backup.dat";
-        File file = new File(backupLocation);
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(levelDataBackup);
-        fileWriter.flush();
-        fileWriter.close();
+        try {
+            File file = new File(backupLocation);
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(levelDataBackup);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception e) {
+            log.append("ERROR: idk wtf when worng lol");
+        }
     }
 
-    public void outputLevelData() throws IOException {
-        File file = new File(pathOut);
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(levelData);
-        fileWriter.flush();
-        fileWriter.close();
+    public void outputLevelData(JTextArea log) {
+        try {
+            File file = new File(pathOut);
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(levelData);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception e) {
+            log.append("ERROR: idk wtf when worng lol");
+        }
     }
 
-    public void checkEvents() {
+    public void checkEvents(JTextArea log) {
         laserCount = 0;
-        // System.out.print("Looking for Laser events... \r");
+        log.append("Looking for Laser events... \n");
 
         for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
             if (levelData.substring(i, (i + rLaserType.length())).equals(rLaserType)) {
-                // System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                log.append("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + laserCount + " PROGRESS: " + i + "/" + levelData.length() + "\n");
                 laserCount++;
             } else if (levelData.substring(i, (i + lLaserType.length())).equals(lLaserType)) {
-                // System.out.print("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + LaserCount + " PROGRESS: " + i + "/" + levelData.length() + "\r");
+                log.append("Looking for " + lLaserType + " and " + rLaserType + ". Found: " + laserCount + " PROGRESS: " + i + "/" + levelData.length() + "\n");
                 laserCount++;
             }
         }
 
-        // System.out.println("Found " + LaserCount + " matches for laser speed events.                                  ");
+        log.append("Found " + laserCount + " matches for laser speed events. \n");
     }
 
-    public void replaceEvents() {
+    public void replaceEvents(JTextArea log) {
         replacedLaserCount = 0;
         // Start replacing based on type 13's value
         for (int i = 0; i < (levelData.length() - rLaserType.length() - 5); i++) {
@@ -106,6 +117,7 @@ public class Converter {
                 event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
                 levelData = levelData.substring(0, i) + event + levelData.substring(levelData.indexOf("}", i));
                 replacedLaserCount++;
+                log.append("Converting laser events...  Currently on " + replacedLaserCount + "/" + laserCount + "\n");
 
                 // Start replacing based on type 12's value
             } else if (levelData.substring(i, (i + lLaserType.length())).equals(lLaserType)) {
@@ -126,10 +138,10 @@ public class Converter {
                 event = "\"_type\":" + eventType + ",\"_value\":" + eventValue;
                 levelData = levelData.substring(0, i) + event + levelData.substring(levelData.indexOf("}", i));
                 replacedLaserCount++;
+                log.append("Converting laser events...  Currently on " + replacedLaserCount + "/" + laserCount + "\n");
             }
-            // System.out.print("Converting laser events...  Currently on " + replacedLaserCount + "/" + laserCount + "\r");
         }
-        // System.out.println("Converting laser events... Done. " + replacedLaserCount + "/" + laserCount + "             ");
+        log.append("Converting laser events... Done. " + replacedLaserCount + "/" + laserCount + "\n");
     }
 /*  Used for holding old method, as I would still like to keep it in the branch for refrence for now.
     private static void prototype() throws FileNotFoundException, IOException {
