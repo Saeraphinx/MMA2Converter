@@ -1,12 +1,9 @@
 import java.util.Scanner;
-
 import javax.swing.JTextArea;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
 
 // not completely finished, but hopefully it's close.
 

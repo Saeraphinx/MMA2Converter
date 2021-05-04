@@ -2,9 +2,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.*;
-import java.util.*;
+
 
 // Just yoinked the code from my ScuffedWalls Project
 public class Window implements ActionListener {
